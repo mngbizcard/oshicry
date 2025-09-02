@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.nickname }} - {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-4">
+        <!-- Profile Info -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <div class="avatar-large mx-auto mb-3">
+                    {{ profile_user.nickname[0].upper() if profile_user.nickname else 'U' }}
+                </div>
+                
+                <h4>{{ profile_user.nickname }}</h4>
+                <p class="text-muted">@{{ profile_user.username }}</p>
+                
+                {% if profile_user.bio %}
+                <p class="text-muted">{{ profile_user.bio }}</p>
+                {% endif %}
+                
+                <div class="row text-center mb-3">
+                    <div class="col-4">
+                        <strong class="d-block">{{ posts|length }}</strong>
+                        <small class="text-muted">{{ t('posts') }}</small>
+                    </div>
+                    <div class="col-4">
+                        <strong class="d-block">{{ profile_user.following_users|length }}</strong>
+                        <small class="text-muted">{{ t('following') }}</small>
+                    </div>
+                    <div class="col-4">
+                        <strong class="d-block">0</strong>
+                        <small class="text-muted">{{ t('followers') }}</small>
+                    </div>
+                </div>
+                
+                {% if current_user and current_user.id != profile_user.id %}
+                <div class="d-grid">
+                    {% if profile_user.id in current_user.following_users %}
+                    <a href="{{ url_for('follow', follow_type='user', target_id=profile_user.id) }}" 
+                       class="btn btn-outline-primary">{{ t('unfollow') }}</a>
+                    {% else %}
+                    <a href="{{ url_for('follow', follow_type='user', target_id=profile_user.id) }}" 
+                       class="btn btn-primary">{{ t('follow') }}</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Following Works -->
+        {% if profile_user.following_works %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-book me-2"></i>Following Works</h6>
+            </div>
+            <div class="card-body p-0">
+                {% for work_id in profile_user.following_works %}
+                    {% if work_id in works %}
+                    <a href="{{ url_for('work', work_id=work_id) }}" 
+                       class="list-group-item list-group-item-action border-0">
+                        {{ works[work_id].name_jp if lang == 'ja' and works[work_id].name_jp else works[work_id].name }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Following Characters -->
+        {% if profile_user.following_characters %}
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-star me-2"></i>Following Characters</h6>
+            </div>
+            <div class="card-body p-0">
+                {% for char_id in profile_user.following_characters %}
+                    {% if char_id in characters %}
+                    <a href="{{ url_for('character', character_id=char_id) }}" 
+                       class="list-group-item list-group-item-action border-0">
+                        <strong>{{ characters[char_id].name_jp if lang == 'ja' and characters[char_id].name_jp else characters[char_id].name }}</strong>
+                        <small class="text-muted d-block">
+                            {{ works[characters[char_id].work_id].name_jp if lang == 'ja' and works[characters[char_id].work_id].name_jp else works[characters[char_id].work_id].name }}
+                        </small>
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-8">
+        <h5 class="mb-4">{{ profile_user.nickname }}'s Cries</h5>
+        
+        <!-- Posts -->
+        {% if posts %}
+            {% for post in posts %}
+            <div class="card mb-3 post-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+
+                    {% if post.work_id or post.character_id %}
+                    <div class="mb-2">
+                        {% if post.character_id %}
+                        <span class="badge bg-secondary me-2">
+                            <i class="fas fa-user me-1"></i>
+                            {{ characters[post.character_id].name_jp if lang == 'ja' and characters[post.character_id].name_jp else characters[post.character_id].name }}
+                        </span>
+                        {% endif %}
+                        {% if post.work_id %}
+                        <span class="badge bg-info">
+                            <i class="fas fa-book me-1"></i>
+                            {{ works[post.work_id].name_jp if lang == 'ja' and works[post.work_id].name_jp else works[post.work_id].name }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <p class="card-text">{{ post.content }}</p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group" role="group">
+                            {% for reaction_type, icon in [('heart', 'heart'), ('fire', 'fire'), ('cry', 'sad-tear')] %}
+                            <a href="{{ url_for('react_to_post', post_id=post.id, reaction_type=reaction_type) }}" 
+                               class="btn btn-sm {{ 'btn-primary' if current_user and post.user_reacted(current_user.id, reaction_type) else 'btn-outline-primary' }}">
+                                <i class="fas fa-{{ icon }} me-1"></i>{{ post.get_reaction_count(reaction_type) }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        
+                        <div>
+                            <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-comment me-1"></i>{{ t('reply') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-ghost fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No cries yet!</h5>
+                <p class="text-muted">{{ profile_user.nickname }} hasn't posted any cries yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

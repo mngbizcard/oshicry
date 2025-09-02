@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('register') }} - {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card auth-card">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                    <h3>{{ t('register') }}</h3>
+                    <p class="text-muted">Join the {{ t('app_name') }} community!</p>
+                </div>
+
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="nickname" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="nickname" name="nickname">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Bio (Optional)</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="3" 
+                                placeholder="Tell us about yourself and your favorite characters..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="language" class="form-label">Preferred Language</label>
+                        <select class="form-select" id="language" name="language">
+                            <option value="en">English</option>
+                            <option value="ja">日本語</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-user-plus me-2"></i>{{ t('register') }}
+                    </button>
+                </form>
+
+                <div class="text-center">
+                    <p class="mb-0">Already have an account? 
+                        <a href="{{ url_for('login') }}" class="text-decoration-none">{{ t('login') }}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

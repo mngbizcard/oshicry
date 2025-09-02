@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Post by {{ users[post.user_id].nickname }} - {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Main Post -->
+        <div class="card mb-4 post-detail">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-3">
+                            {{ users[post.user_id].nickname[0].upper() if users[post.user_id].nickname else 'U' }}
+                        </div>
+                        <div>
+                            <a href="{{ url_for('profile', user_id=post.user_id) }}" class="text-decoration-none">
+                                <h5 class="mb-0">{{ users[post.user_id].nickname }}</h5>
+                            </a>
+                            <small class="text-muted">@{{ users[post.user_id].username }}</small>
+                        </div>
+                    </div>
+                    <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                </div>
+
+                {% if post.work_id or post.character_id %}
+                <div class="mb-3">
+                    {% if post.character_id %}
+                    <span class="badge bg-secondary me-2">
+                        <i class="fas fa-user me-1"></i>
+                        <a href="{{ url_for('character', character_id=post.character_id) }}" class="text-white text-decoration-none">
+                            {{ characters[post.character_id].name_jp if lang == 'ja' and characters[post.character_id].name_jp else characters[post.character_id].name }}
+                        </a>
+                    </span>
+                    {% endif %}
+                    {% if post.work_id %}
+                    <span class="badge bg-info">
+                        <i class="fas fa-book me-1"></i>
+                        <a href="{{ url_for('work', work_id=post.work_id) }}" class="text-white text-decoration-none">
+                            {{ works[post.work_id].name_jp if lang == 'ja' and works[post.work_id].name_jp else works[post.work_id].name }}
+                        </a>
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <p class="card-text fs-5">{{ post.content }}</p>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group" role="group">
+                        {% for reaction_type, icon in [('heart', 'heart'), ('fire', 'fire'), ('cry', 'sad-tear')] %}
+                        <a href="{{ url_for('react_to_post', post_id=post.id, reaction_type=reaction_type) }}" 
+                           class="btn {{ 'btn-primary' if current_user and post.user_reacted(current_user.id, reaction_type) else 'btn-outline-primary' }}">
+                            <i class="fas fa-{{ icon }} me-2"></i>{{ post.get_reaction_count(reaction_type) }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reply Form -->
+        {% if current_user %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title">{{ t('reply') }} to {{ users[post.user_id].nickname }}</h6>
+                <form method="POST" action="{{ url_for('create_post') }}">
+                    <input type="hidden" name="parent_id" value="{{ post.id }}">
+                    <input type="hidden" name="work_id" value="{{ post.work_id or '' }}">
+                    <input type="hidden" name="character_id" value="{{ post.character_id or '' }}">
+                    
+                    <div class="mb-3">
+                        <textarea class="form-control" name="content" rows="3" 
+                                placeholder="Write your reply..." maxlength="280" required></textarea>
+                        <div class="form-text">
+                            <span id="char-count">280</span> characters remaining
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-reply me-1"></i>{{ t('reply') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Replies -->
+        {% if replies %}
+        <h5 class="mb-3">Replies</h5>
+        {% for reply in replies %}
+        <div class="card mb-3 reply-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-2">
+                            {{ users[reply.user_id].nickname[0].upper() if users[reply.user_id].nickname else 'U' }}
+                        </div>
+                        <div>
+                            <a href="{{ url_for('profile', user_id=reply.user_id) }}" class="text-decoration-none">
+                                <strong>{{ users[reply.user_id].nickname }}</strong>
+                            </a>
+                            <small class="text-muted">@{{ users[reply.user_id].username }}</small>
+                        </div>
+                    </div>
+                    <small class="text-muted">{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                </div>
+
+                <p class="card-text">{{ reply.content }}</p>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group" role="group">
+                        {% for reaction_type, icon in [('heart', 'heart'), ('fire', 'fire'), ('cry', 'sad-tear')] %}
+                        <a href="{{ url_for('react_to_post', post_id=reply.id, reaction_type=reaction_type) }}" 
+                           class="btn btn-sm {{ 'btn-primary' if current_user and reply.user_reacted(current_user.id, reaction_type) else 'btn-outline-primary' }}">
+                            <i class="fas fa-{{ icon }} me-1"></i>{{ reply.get_reaction_count(reaction_type) }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-comment fa-2x text-muted mb-3"></i>
+            <h6 class="text-muted">No replies yet</h6>
+            <p class="text-muted">Be the first to reply to this cry!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
