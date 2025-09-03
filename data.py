@@ -66,6 +66,84 @@ def init_data():
     for char in [eren, mikasa, levi, hange, tanjiro, nezuko, zenitsu, giyu, yuji, gojo, nobara, megumi]:
         characters[char.id] = char
         works[char.work_id].add_character(char)
+    
+    # Create sample users
+    user1 = create_user("anime_fan_2024", "fan@example.com", "password123", "AnimeOtaku", "Big fan of shounen anime! Gojo is my oshi 💜", "en")
+    user2 = create_user("manga_reader", "reader@example.com", "password123", "MangaLover", "Reading manga since 2010. Attack on Titan changed my life!", "en")
+    user3 = create_user("otaku_senpai", "senpai@example.com", "password123", "OtakuSenpai", "先輩です！アニメが大好きです。", "ja")
+    user4 = create_user("cry_for_oshi", "cry@example.com", "password123", "CryForOshi", "Emotional about every character death 😭", "en")
+    user5 = create_user("tanjiro_stan", "tanjiro@example.com", "password123", "TanjiroStan", "Demon Slayer is the best anime ever created!", "en")
+    
+    # Make users follow some works and characters
+    user1.follow_work(jjk.id)
+    user1.follow_character(gojo.id)
+    user1.follow_character(yuji.id)
+    
+    user2.follow_work(aot.id)
+    user2.follow_character(eren.id)
+    user2.follow_character(levi.id)
+    
+    user3.follow_work(ds.id)
+    user3.follow_character(tanjiro.id)
+    user3.follow_character(nezuko.id)
+    
+    user4.follow_character(mikasa.id)
+    user4.follow_character(nezuko.id)
+    user4.follow_character(nobara.id)
+    
+    user5.follow_work(ds.id)
+    user5.follow_character(tanjiro.id)
+    user5.follow_character(giyu.id)
+    
+    # Create sample posts
+    sample_posts = [
+        # Jujutsu Kaisen posts
+        (user1.id, "Gojo's domain expansion is literally the most beautiful thing in anime! The visual effects are insane! 🔥", jjk.id, gojo.id),
+        (user1.id, "Yuji's character development this season has me crying every episode... he deserves the world 😭", jjk.id, yuji.id),
+        (user4.id, "Nobara is such an underrated character! Her confidence and strength inspire me every day 💪", jjk.id, nobara.id),
+        
+        # Attack on Titan posts
+        (user2.id, "That final scene with Eren... I'm still not over it. What a masterpiece of storytelling!", aot.id, eren.id),
+        (user2.id, "Levi vs Beast Titan is still the best fight scene in all of anime. PERIODT.", aot.id, levi.id),
+        (user4.id, "Mikasa deserved so much better. My heart breaks for her every time I rewatch the ending 💔", aot.id, mikasa.id),
+        (user3.id, "進撃の巨人の最終回を見た後、まだ泣いています。。。", aot.id, None),
+        
+        # Demon Slayer posts
+        (user5.id, "Tanjiro's kindness towards demons makes him the best protagonist in shounen anime!", ds.id, tanjiro.id),
+        (user5.id, "The animation quality in the Entertainment District arc was absolutely phenomenal!", ds.id, None),
+        (user3.id, "禰豆子ちゃんが可愛すぎる！保護したい！", ds.id, nezuko.id),
+        (user4.id, "Every time Zenitsu powers up I get literal chills. Thunder breathing is so cool!", ds.id, zenitsu.id),
+        (user5.id, "Giyu's backstory episode had me sobbing for hours. He's been through so much pain...", ds.id, giyu.id),
+        
+        # General anime posts
+        (user1.id, "Why do all my favorite characters have to suffer so much? 😭 Anime really knows how to break hearts", None, None),
+        (user2.id, "Currently rewatching all three series and the emotional damage is real... worth it though!", None, None),
+        (user3.id, "新しいアニメシーズンが楽しみです！皆さんのおすすめはありますか？", None, None),
+    ]
+    
+    # Create the posts and add some reactions
+    for user_id, content, work_id, character_id in sample_posts:
+        post = create_post(user_id, content, work_id, character_id)
+        
+        # Add some random reactions to posts
+        import random
+        reaction_types = ['heart', 'fire', 'cry']
+        for _ in range(random.randint(1, 4)):  # 1-4 reactions per post
+            reactor_id = random.choice([user1.id, user2.id, user3.id, user4.id, user5.id])
+            reaction_type = random.choice(reaction_types)
+            if not post.user_reacted(reactor_id, reaction_type):
+                post.add_reaction(reactor_id, reaction_type)
+    
+    # Create some replies
+    first_post = list(posts.values())[0] if posts else None
+    if first_post:
+        reply1 = create_post(user2.id, "I totally agree! Gojo is literally perfection ✨", first_post.work_id, first_post.character_id, first_post.id)
+        reply2 = create_post(user3.id, "五条先生最高です！", first_post.work_id, first_post.character_id, first_post.id)
+        
+        # Add reactions to replies
+        reply1.add_reaction(user1.id, 'heart')
+        reply1.add_reaction(user4.id, 'heart')
+        reply2.add_reaction(user1.id, 'fire')
 
 def create_user(username, email, password, nickname="", bio="", language="en"):
     """Create a new user"""

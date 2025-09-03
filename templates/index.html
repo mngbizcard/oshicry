@@ -1,5 +1,63 @@
 {% extends "base.html" %}
 
+<!-- Post Card Macro -->
+{% macro render_post(post) %}
+<div class="card mb-3 post-card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="d-flex align-items-center">
+                <div class="avatar-circle me-2">
+                    {{ users[post.user_id].nickname[0].upper() if users[post.user_id].nickname else 'U' }}
+                </div>
+                <div>
+                    <a href="{{ url_for('profile', user_id=post.user_id) }}" class="text-decoration-none">
+                        <strong>{{ users[post.user_id].nickname }}</strong>
+                    </a>
+                    <small class="text-muted">@{{ users[post.user_id].username }}</small>
+                </div>
+            </div>
+            <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+
+        {% if post.work_id or post.character_id %}
+        <div class="mb-2">
+            {% if post.character_id %}
+            <span class="badge bg-secondary me-2">
+                <i class="fas fa-user me-1"></i>
+                {{ characters[post.character_id].name_jp if lang == 'ja' and characters[post.character_id].name_jp else characters[post.character_id].name }}
+            </span>
+            {% endif %}
+            {% if post.work_id %}
+            <span class="badge bg-info">
+                <i class="fas fa-book me-1"></i>
+                {{ works[post.work_id].name_jp if lang == 'ja' and works[post.work_id].name_jp else works[post.work_id].name }}
+            </span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <p class="card-text">{{ post.content }}</p>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group" role="group">
+                {% for reaction_type, icon in [('heart', 'heart'), ('fire', 'fire'), ('cry', 'sad-tear')] %}
+                <a href="{{ url_for('react_to_post', post_id=post.id, reaction_type=reaction_type) }}" 
+                   class="btn btn-sm {{ 'btn-primary' if current_user and post.user_reacted(current_user.id, reaction_type) else 'btn-outline-primary' }}">
+                    <i class="fas fa-{{ icon }} me-1"></i>{{ post.get_reaction_count(reaction_type) }}
+                </a>
+                {% endfor %}
+            </div>
+            
+            <div>
+                <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-comment me-1"></i>{{ t('reply') }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
 {% block content %}
 <div class="row">
     <!-- Main Content -->
@@ -48,7 +106,7 @@
         <div class="posts-feed">
             {% if posts %}
                 {% for post in posts %}
-                    {% include 'partials/post_card.html' %}
+                    {{ render_post(post) }}
                 {% endfor %}
             {% else %}
                 <div class="text-center py-5">
@@ -122,66 +180,17 @@
     </div>
 </div>
 
-<!-- Post Card Template -->
-{% macro render_post(post) %}
-<div class="card mb-3 post-card">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start mb-2">
-            <div class="d-flex align-items-center">
-                <div class="avatar-circle me-2">
-                    {{ users[post.user_id].nickname[0].upper() if users[post.user_id].nickname else 'U' }}
-                </div>
-                <div>
-                    <a href="{{ url_for('profile', user_id=post.user_id) }}" class="text-decoration-none">
-                        <strong>{{ users[post.user_id].nickname }}</strong>
-                    </a>
-                    <small class="text-muted">@{{ users[post.user_id].username }}</small>
-                </div>
-            </div>
-            <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-        </div>
-
-        {% if post.work_id or post.character_id %}
-        <div class="mb-2">
-            {% if post.character_id %}
-            <span class="badge bg-secondary me-2">
-                <i class="fas fa-user me-1"></i>
-                {{ characters[post.character_id].name_jp if lang == 'ja' and characters[post.character_id].name_jp else characters[post.character_id].name }}
-            </span>
-            {% endif %}
-            {% if post.work_id %}
-            <span class="badge bg-info">
-                <i class="fas fa-book me-1"></i>
-                {{ works[post.work_id].name_jp if lang == 'ja' and works[post.work_id].name_jp else works[post.work_id].name }}
-            </span>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        <p class="card-text">{{ post.content }}</p>
-
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="btn-group" role="group">
-                {% for reaction_type, icon in [('heart', 'heart'), ('fire', 'fire'), ('cry', 'sad-tear')] %}
-                <a href="{{ url_for('react_to_post', post_id=post.id, reaction_type=reaction_type) }}" 
-                   class="btn btn-sm {{ 'btn-primary' if current_user and post.user_reacted(current_user.id, reaction_type) else 'btn-outline-primary' }}">
-                    <i class="fas fa-{{ icon }} me-1"></i>{{ post.get_reaction_count(reaction_type) }}
-                </a>
-                {% endfor %}
-            </div>
-            
-            <div>
-                <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="fas fa-comment me-1"></i>{{ t('reply') }}
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-{% endmacro %}
-
-<!-- Render all posts -->
-{% for post in posts %}
-    {{ render_post(post) }}
-{% endfor %}
 {% endblock %}
+
+<script>
+// Pass character data to JavaScript
+window.charactersData = {
+    {% for character in characters.values() %}
+    {{ character.id }}: {
+        id: {{ character.id }},
+        name: "{{ character.name_jp if lang == 'ja' and character.name_jp else character.name }}",
+        work_id: {{ character.work_id }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+</script>
