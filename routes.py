@@ -7,7 +7,7 @@ import logging
 # Language translations
 TRANSLATIONS = {
     'en': {
-        'app_name': 'OshiCRY',
+        'app_name': 'OSHIdom CRY',
         'home': 'Home',
         'works': 'Works',
         'profile': 'Profile',
@@ -28,7 +28,7 @@ TRANSLATIONS = {
         'following': 'Following'
     },
     'ja': {
-        'app_name': 'オシクライ',
+        'app_name': '推しCRY',
         'home': 'ホーム',
         'works': '作品',
         'profile': 'プロフィール',
