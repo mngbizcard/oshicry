@@ -65,7 +65,10 @@ def inject_user():
     return {
         'current_user': user,
         'lang': lang,
-        't': lambda key: get_translation(key, lang)
+        't': lambda key: get_translation(key, lang),
+        'works': data.works,
+        'characters': data.characters,
+        'users': data.users
     }
 
 @app.route('/')

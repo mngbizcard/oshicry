@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Work/Character selection dependency
     initWorkCharacterSelection();
     
+    // Modal form functionality
+    initModalForm();
+    
     // Auto-hide flash messages
     initFlashMessages();
     
@@ -25,7 +28,7 @@ function initCharacterCounter() {
     
     textareas.forEach(textarea => {
         const maxLength = parseInt(textarea.getAttribute('maxlength'));
-        const charCountElement = document.getElementById('char-count');
+        const charCountElement = document.getElementById('char-count') || document.getElementById('modal-char-count');
         
         if (charCountElement) {
             // Update counter on input
@@ -78,6 +81,83 @@ function initWorkCharacterSelection() {
                 });
             } else {
                 characterSelect.disabled = true;
+            }
+        });
+    }
+}
+
+/**
+ * Initialize modal form functionality
+ */
+function initModalForm() {
+    const modalWorkSelect = document.getElementById('modal-work-select');
+    const modalCharacterSelect = document.getElementById('modal-character-select');
+    const modalTextarea = document.querySelector('#createPostModal textarea[maxlength]');
+    const modalCharCount = document.getElementById('modal-char-count');
+    
+    // Modal work/character selection
+    if (modalWorkSelect && modalCharacterSelect) {
+        const characters = window.charactersData || {};
+        
+        modalWorkSelect.addEventListener('change', function() {
+            const workId = this.value;
+            
+            // Clear character options
+            modalCharacterSelect.innerHTML = '<option value="">Select Character</option>';
+            
+            if (workId) {
+                modalCharacterSelect.disabled = false;
+                
+                // Add characters for selected work
+                Object.values(characters).forEach(character => {
+                    if (character.work_id == workId) {
+                        const option = document.createElement('option');
+                        option.value = character.id;
+                        option.textContent = character.name;
+                        modalCharacterSelect.appendChild(option);
+                    }
+                });
+            } else {
+                modalCharacterSelect.disabled = true;
+            }
+        });
+    }
+    
+    // Modal character counter
+    if (modalTextarea && modalCharCount) {
+        const maxLength = parseInt(modalTextarea.getAttribute('maxlength'));
+        
+        modalTextarea.addEventListener('input', function() {
+            const remaining = maxLength - this.value.length;
+            modalCharCount.textContent = remaining;
+            
+            // Add warning/danger classes
+            modalCharCount.classList.remove('warning', 'danger');
+            if (remaining < 50) {
+                modalCharCount.classList.add('warning');
+            }
+            if (remaining < 20) {
+                modalCharCount.classList.remove('warning');
+                modalCharCount.classList.add('danger');
+            }
+        });
+    }
+    
+    // Reset modal form when closed
+    const modal = document.getElementById('createPostModal');
+    if (modal) {
+        modal.addEventListener('hidden.bs.modal', function() {
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+                if (modalCharacterSelect) {
+                    modalCharacterSelect.disabled = true;
+                    modalCharacterSelect.innerHTML = '<option value="">Select Character</option>';
+                }
+                if (modalCharCount) {
+                    modalCharCount.textContent = '280';
+                    modalCharCount.classList.remove('warning', 'danger');
+                }
             }
         });
     }
