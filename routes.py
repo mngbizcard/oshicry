@@ -1,8 +1,26 @@
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
+from urllib.parse import urlparse
 from app import app
 import data
 from models import User
 import logging
+
+def safe_redirect_url(referrer_url, fallback_url):
+    """Validate referrer URL to prevent open redirect attacks."""
+    if not referrer_url:
+        return fallback_url
+    
+    try:
+        parsed_referrer = urlparse(referrer_url)
+        parsed_request = urlparse(request.url)
+        
+        # Only allow redirects to the same domain (netloc)
+        if parsed_referrer.netloc == parsed_request.netloc:
+            return referrer_url
+    except (ValueError, AttributeError):
+        pass
+    
+    return fallback_url
 
 # Language translations
 TRANSLATIONS = {
@@ -219,16 +237,16 @@ def create_post():
     
     if not content:
         flash('Post content cannot be empty.', 'error')
-        return redirect(request.referrer or url_for('index'))
+        return redirect(safe_redirect_url(request.referrer, url_for('index')))
     
     if len(content) > 280:
         flash('Post content cannot exceed 280 characters.', 'error')
-        return redirect(request.referrer or url_for('index'))
+        return redirect(safe_redirect_url(request.referrer, url_for('index')))
     
     # Check if work is required (not empty and not "custom" without custom_work)
     if not work_id or (work_id == 'custom' and not custom_work):
         flash('Please select a work or enter a custom work name.', 'error')
-        return redirect(request.referrer or url_for('index'))
+        return redirect(safe_redirect_url(request.referrer, url_for('index')))
     
     # Handle custom inputs
     if work_id == 'custom':
@@ -248,7 +266,7 @@ def create_post():
     post = data.create_post(current_user.id, content, work_id, character_id, parent_id, scene, custom_work, custom_character, custom_scene)
     flash('Cry posted successfully!', 'success')
     
-    return redirect(request.referrer or url_for('index'))
+    return redirect(safe_redirect_url(request.referrer, url_for('index')))
 
 @app.route('/react/<int:post_id>/<reaction_type>')
 def react_to_post(post_id, reaction_type):
@@ -260,7 +278,7 @@ def react_to_post(post_id, reaction_type):
     post = data.posts.get(post_id)
     if not post:
         flash('Post not found.', 'error')
-        return redirect(request.referrer or url_for('index'))
+        return redirect(safe_redirect_url(request.referrer, url_for('index')))
     
     # Toggle reaction
     if post.user_reacted(current_user.id, reaction_type):
@@ -268,7 +286,7 @@ def react_to_post(post_id, reaction_type):
     else:
         post.add_reaction(current_user.id, reaction_type)
     
-    return redirect(request.referrer or url_for('index'))
+    return redirect(safe_redirect_url(request.referrer, url_for('index')))
 
 @app.route('/follow/<follow_type>/<int:target_id>')
 def follow(follow_type, target_id):
@@ -299,7 +317,7 @@ def follow(follow_type, target_id):
             current_user.follow_character(target_id)
             flash('Following character.', 'success')
     
-    return redirect(request.referrer or url_for('index'))
+    return redirect(safe_redirect_url(request.referrer, url_for('index')))
 
 @app.route('/post/<int:post_id>')
 def view_post(post_id):
@@ -325,4 +343,4 @@ def set_language(lang):
         user = get_current_user()
         if user:
             user.language = lang
-    return redirect(request.referrer or url_for('index'))
+    return redirect(safe_redirect_url(request.referrer, url_for('index')))
