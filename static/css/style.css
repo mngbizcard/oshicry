@@ -611,6 +611,24 @@ footer {
     .work-actions .btn {
         width: 100%;
     }
+    
+    .partnership-banners {
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .partnership-banners .row {
+        --bs-gutter-x: 0.5rem;
+    }
+    
+    .partnership-card {
+        margin-bottom: 1rem;
+    }
+    
+    .partnership-banners h5 {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
 }
 
 /* Clickable Tags */
@@ -623,4 +641,153 @@ footer {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     filter: brightness(1.1);
+}
+
+/* Partnership Banners */
+.partnership-banners {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    color: white;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.partnership-banners h5 {
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.partnership-card {
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.partnership-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.partnership-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.partnership-card:hover::before {
+    opacity: 1;
+}
+
+.kadokawa-card {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+}
+
+.shueisha-card {
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    color: white;
+}
+
+.kodansha-card {
+    background: linear-gradient(135deg, #45b7d1 0%, #96c93d 100%);
+    color: white;
+}
+
+.partnership-icon {
+    opacity: 0.9;
+}
+
+.partnership-card .badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Post Trigger Button */
+.post-trigger-btn {
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(116, 75, 162, 0.3);
+    transition: all 0.3s ease;
+}
+
+.post-trigger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(116, 75, 162, 0.4);
+}
+
+/* Floating Action Button */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 20px rgba(116, 75, 162, 0.4);
+    transition: all 0.3s ease;
+    display: none;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(116, 75, 162, 0.5);
+    color: white;
+}
+
+/* Show FAB on mobile */
+@media (max-width: 768px) {
+    .fab {
+        display: block;
+    }
+    .post-trigger-btn {
+        display: none;
+    }
+}
+
+/* Timeline Focus */
+.posts-feed {
+    margin-top: 0;
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    border-bottom: none;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+.modal-title {
+    font-weight: 600;
 }

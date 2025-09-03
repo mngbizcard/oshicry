@@ -43,6 +43,11 @@
                             {% endfor %}
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}#popular">
+                            <i class="fas fa-fire me-1"></i>Popular
+                        </a>
+                    </li>
                 </ul>
                 
                 <ul class="navbar-nav">
@@ -132,7 +137,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <textarea class="form-control" name="content" rows="4" 
-                                    placeholder="{{ t('whats_happening') }}" maxlength="280" required></textarea>
+                                    placeholder="思いの丈を叫んで(｀・ω・´)b" maxlength="280" required></textarea>
                             <div class="form-text">
                                 <span id="modal-char-count">280</span> characters remaining
                             </div>
@@ -156,7 +161,7 @@
                             <div class="col-md-6">
                                 <label for="modal-character-select" class="form-label">Character (Optional)</label>
                                 <select class="form-select" name="character_id" id="modal-character-select" disabled>
-                                    <option value="">Select Character</option>
+                                    <option value="">Select Character (Optional)</option>
                                 </select>
                                 <input type="text" class="form-control mt-2" name="custom_character" id="modal-custom-character-input" placeholder="Enter custom character name" style="display: none;">
                                 <small class="form-text text-muted mt-1" id="modal-custom-character-note" style="display: none;">Custom entries require approval</small>

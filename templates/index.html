@@ -101,71 +101,60 @@
 {% endmacro %}
 
 {% block content %}
+<!-- Partnership Banners -->
+<div class="partnership-banners mb-4">
+    <div class="container-fluid">
+        <h5 class="mb-3 text-center"><i class="fas fa-handshake me-2"></i>Official Partnership Projects</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card partnership-card kadokawa-card h-100">
+                    <div class="card-body text-center">
+                        <div class="partnership-icon mb-2">
+                            <i class="fas fa-crown fa-2x"></i>
+                        </div>
+                        <h6 class="card-title">Kadokawa Partnership Project</h6>
+                        <p class="card-text small">Exclusive content collaboration with major anime publishers</p>
+                        <span class="badge bg-warning">Premium Content</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card partnership-card shueisha-card h-100">
+                    <div class="card-body text-center">
+                        <div class="partnership-icon mb-2">
+                            <i class="fas fa-star fa-2x"></i>
+                        </div>
+                        <h6 class="card-title">Shueisha Collaboration Campaign</h6>
+                        <p class="card-text small">Special events and character spotlights from top manga series</p>
+                        <span class="badge bg-info">Live Events</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card partnership-card kodansha-card h-100">
+                    <div class="card-body text-center">
+                        <div class="partnership-icon mb-2">
+                            <i class="fas fa-rocket fa-2x"></i>
+                        </div>
+                        <h6 class="card-title">Kodansha Creator Support Program</h6>
+                        <p class="card-text small">Community-driven content creation and fan appreciation</p>
+                        <span class="badge bg-success">Creator Hub</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <!-- Main Content -->
     <div class="col-lg-8">
+        <!-- Post Button -->
         {% if current_user %}
-        <!-- Post Form -->
-        <div class="card mb-4 post-form">
-            <div class="card-body">
-                <h5 class="card-title">{{ t('post_cry') }}</h5>
-                <form method="POST" action="{{ url_for('create_post') }}">
-                    <div class="mb-3">
-                        <textarea class="form-control" name="content" rows="3" 
-                                placeholder="{{ t('whats_happening') }}" maxlength="280" required></textarea>
-                        <div class="form-text">
-                            <span id="char-count">280</span> characters remaining
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="work-select" class="form-label">Work <span class="text-danger">*</span></label>
-                            <select class="form-select" name="work_id" id="work-select" required>
-                                <option value="">Select Work</option>
-                                {% for work in works.values() %}
-                                <option value="{{ work.id }}">
-                                    {{ work.name_jp if lang == 'ja' and work.name_jp else work.name }}
-                                </option>
-                                {% endfor %}
-                                <option value="custom">Other/Custom</option>
-                            </select>
-                            <input type="text" class="form-control mt-2" name="custom_work" id="custom-work-input" placeholder="Enter custom work name" style="display: none;">
-                            <small class="form-text text-muted mt-1" id="custom-work-note" style="display: none;">Custom entries require approval</small>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="character-select" class="form-label">Character (Optional)</label>
-                            <select class="form-select" name="character_id" id="character-select" disabled>
-                                <option value="">Select Character (Optional)</option>
-                            </select>
-                            <input type="text" class="form-control mt-2" name="custom_character" id="custom-character-input" placeholder="Enter custom character name" style="display: none;">
-                            <small class="form-text text-muted mt-1" id="custom-character-note" style="display: none;">Custom entries require approval</small>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="scene-select" class="form-label">Scene (Optional)</label>
-                        <select class="form-select" name="scene" id="scene-select">
-                            <option value="">Select Scene (Optional)</option>
-                            <option value="Final Battle">Final Battle</option>
-                            <option value="Training Arc">Training Arc</option>
-                            <option value="Confession Scene">Confession Scene</option>
-                            <option value="First Meeting">First Meeting</option>
-                            <option value="Power Awakening">Power Awakening</option>
-                            <option value="Emotional Moment">Emotional Moment</option>
-                            <option value="Comedy Scene">Comedy Scene</option>
-                            <option value="Flashback">Flashback</option>
-                            <option value="custom">Other/Custom</option>
-                        </select>
-                        <input type="text" class="form-control mt-2" name="custom_scene" id="custom-scene-input" placeholder="Enter custom scene description" style="display: none;">
-                        <small class="form-text text-muted mt-1" id="custom-scene-note" style="display: none;">Custom entries require approval</small>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane me-1"></i>Post Cry
-                    </button>
-                </form>
-            </div>
+        <div class="mb-4 text-center">
+            <button type="button" class="btn btn-primary btn-lg post-trigger-btn" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                <i class="fas fa-plus me-2"></i>{{ t('post_cry') }}
+            </button>
         </div>
         {% endif %}
 
@@ -186,7 +175,7 @@
     </div>
 
     <!-- Sidebar -->
-    <div class="col-lg-4">
+    <div class="col-lg-4" id="popular">
         <!-- Popular Works -->
         {% if popular_works %}
         <div class="card mb-4">
@@ -246,6 +235,7 @@
         {% endif %}
     </div>
 </div>
+
 
 {% endblock %}
 
