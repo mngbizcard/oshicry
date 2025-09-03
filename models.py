@@ -58,13 +58,17 @@ class Character:
         self.created_at = datetime.now()
 
 class Post:
-    def __init__(self, post_id, user_id, content, work_id=None, character_id=None, parent_id=None):
+    def __init__(self, post_id, user_id, content, work_id=None, character_id=None, parent_id=None, scene=None, custom_work=None, custom_character=None, custom_scene=None):
         self.id = post_id
         self.user_id = user_id
         self.content = content
         self.work_id = work_id
         self.character_id = character_id
         self.parent_id = parent_id  # For replies
+        self.scene = scene
+        self.custom_work = custom_work
+        self.custom_character = custom_character
+        self.custom_scene = custom_scene
         self.reactions = {}  # reaction_type -> set of user_ids
         self.created_at = datetime.now()
         self.replies = []

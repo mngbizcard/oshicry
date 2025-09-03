@@ -612,3 +612,15 @@ footer {
         width: 100%;
     }
 }
+
+/* Clickable Tags */
+.clickable-tag {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.clickable-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    filter: brightness(1.1);
+}

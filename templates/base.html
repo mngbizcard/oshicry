@@ -140,22 +140,45 @@
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="modal-work-select" class="form-label">Work (Optional)</label>
-                                <select class="form-select" name="work_id" id="modal-work-select">
+                                <label for="modal-work-select" class="form-label">Work <span class="text-danger">*</span></label>
+                                <select class="form-select" name="work_id" id="modal-work-select" required>
                                     <option value="">Select Work</option>
                                     {% for work in works.values() %}
                                     <option value="{{ work.id }}">
                                         {{ work.name_jp if lang == 'ja' and work.name_jp else work.name }}
                                     </option>
                                     {% endfor %}
+                                    <option value="custom">Other/Custom</option>
                                 </select>
+                                <input type="text" class="form-control mt-2" name="custom_work" id="modal-custom-work-input" placeholder="Enter custom work name" style="display: none;">
+                                <small class="form-text text-muted mt-1" id="modal-custom-work-note" style="display: none;">Custom entries require approval</small>
                             </div>
                             <div class="col-md-6">
                                 <label for="modal-character-select" class="form-label">Character (Optional)</label>
                                 <select class="form-select" name="character_id" id="modal-character-select" disabled>
                                     <option value="">Select Character</option>
                                 </select>
+                                <input type="text" class="form-control mt-2" name="custom_character" id="modal-custom-character-input" placeholder="Enter custom character name" style="display: none;">
+                                <small class="form-text text-muted mt-1" id="modal-custom-character-note" style="display: none;">Custom entries require approval</small>
                             </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="modal-scene-select" class="form-label">Scene (Optional)</label>
+                            <select class="form-select" name="scene" id="modal-scene-select">
+                                <option value="">Select Scene (Optional)</option>
+                                <option value="Final Battle">Final Battle</option>
+                                <option value="Training Arc">Training Arc</option>
+                                <option value="Confession Scene">Confession Scene</option>
+                                <option value="First Meeting">First Meeting</option>
+                                <option value="Power Awakening">Power Awakening</option>
+                                <option value="Emotional Moment">Emotional Moment</option>
+                                <option value="Comedy Scene">Comedy Scene</option>
+                                <option value="Flashback">Flashback</option>
+                                <option value="custom">Other/Custom</option>
+                            </select>
+                            <input type="text" class="form-control mt-2" name="custom_scene" id="modal-custom-scene-input" placeholder="Enter custom scene description" style="display: none;">
+                            <small class="form-text text-muted mt-1" id="modal-custom-scene-note" style="display: none;">Custom entries require approval</small>
                         </div>
                     </div>
                     <div class="modal-footer">

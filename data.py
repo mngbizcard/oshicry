@@ -167,10 +167,10 @@ def get_user_by_username(username):
             return user
     return None
 
-def create_post(user_id, content, work_id=None, character_id=None, parent_id=None):
+def create_post(user_id, content, work_id=None, character_id=None, parent_id=None, scene=None, custom_work=None, custom_character=None, custom_scene=None):
     """Create a new post"""
     post_id = get_next_post_id()
-    post = Post(post_id, user_id, content, work_id, character_id, parent_id)
+    post = Post(post_id, user_id, content, work_id, character_id, parent_id, scene, custom_work, custom_character, custom_scene)
     posts[post_id] = post
     
     # If it's a reply, add to parent's replies

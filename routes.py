@@ -15,7 +15,7 @@ TRANSLATIONS = {
         'register': 'Register',
         'logout': 'Logout',
         'post_cry': 'Post a Cry',
-        'whats_happening': "What's happening with your oshi?",
+        'whats_happening': "思いの丈を叫んで(`・ω・´)b",
         'popular_works': 'Popular Works',
         'popular_characters': 'Popular Characters',
         'latest_cries': 'Latest Cries',
@@ -36,7 +36,7 @@ TRANSLATIONS = {
         'register': '登録',
         'logout': 'ログアウト',
         'post_cry': 'クライを投稿',
-        'whats_happening': '推しに何が起こっていますか？',
+        'whats_happening': '思いの丈を叫んで(`・ω・´)b',
         'popular_works': '人気作品',
         'popular_characters': '人気キャラクター',
         'latest_cries': '最新のクライ',
@@ -212,6 +212,10 @@ def create_post():
     work_id = request.form.get('work_id')
     character_id = request.form.get('character_id')
     parent_id = request.form.get('parent_id')
+    scene = request.form.get('scene')
+    custom_work = request.form.get('custom_work', '').strip()
+    custom_character = request.form.get('custom_character', '').strip()
+    custom_scene = request.form.get('custom_scene', '').strip()
     
     if not content:
         flash('Post content cannot be empty.', 'error')
@@ -221,12 +225,27 @@ def create_post():
         flash('Post content cannot exceed 280 characters.', 'error')
         return redirect(request.referrer or url_for('index'))
     
+    # Check if work is required (not empty and not "custom" without custom_work)
+    if not work_id or (work_id == 'custom' and not custom_work):
+        flash('Please select a work or enter a custom work name.', 'error')
+        return redirect(request.referrer or url_for('index'))
+    
+    # Handle custom inputs
+    if work_id == 'custom':
+        work_id = None  # Use custom_work instead
+    
+    if character_id == 'custom':
+        character_id = None  # Use custom_character instead
+    
+    if scene == 'custom':
+        scene = custom_scene if custom_scene else None
+    
     # Convert string IDs to integers
-    work_id = int(work_id) if work_id and work_id != 'None' else None
-    character_id = int(character_id) if character_id and character_id != 'None' else None
+    work_id = int(work_id) if work_id and work_id != 'None' and work_id != 'custom' else None
+    character_id = int(character_id) if character_id and character_id != 'None' and character_id != 'custom' else None
     parent_id = int(parent_id) if parent_id and parent_id != 'None' else None
     
-    post = data.create_post(current_user.id, content, work_id, character_id, parent_id)
+    post = data.create_post(current_user.id, content, work_id, character_id, parent_id, scene, custom_work, custom_character, custom_scene)
     flash('Cry posted successfully!', 'success')
     
     return redirect(request.referrer or url_for('index'))
