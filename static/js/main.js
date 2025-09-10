@@ -520,6 +520,19 @@ window.charactersData = {};
 /**
  * Initialize translation functionality
  */
+/**
+ * Detect the language of a text
+ */
+function detectLanguage(text) {
+    // Simple Japanese detection using Unicode ranges
+    const japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/;
+    const japaneseMatches = (text.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g) || []).length;
+    const totalChars = text.replace(/\s/g, '').length;
+    
+    // If more than 30% of characters are Japanese, consider it Japanese
+    return japaneseMatches > totalChars * 0.3 ? 'ja' : 'en';
+}
+
 function initTranslation() {
     // Handle translate button clicks
     document.addEventListener('click', function(e) {
@@ -527,7 +540,14 @@ function initTranslation() {
             const button = e.target.closest('.translate-btn');
             const postId = button.dataset.postId;
             const content = button.dataset.content;
-            const currentLang = document.documentElement.lang || 'en';
+            const userLang = document.querySelector('html').getAttribute('data-user-lang') || 'en';
+            const postLang = detectLanguage(content);
+            
+            // Don't translate if post is already in user's language
+            if (postLang === userLang) {
+                showTranslation(postId, content);
+                return;
+            }
             
             // Show loading state
             button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Translating...';
@@ -535,7 +555,7 @@ function initTranslation() {
             
             // Simulate translation with placeholder
             setTimeout(() => {
-                const translatedText = translateText(content, currentLang);
+                const translatedText = translateText(content, postLang, userLang);
                 showTranslation(postId, translatedText);
                 
                 // Reset button
@@ -556,7 +576,7 @@ function initTranslation() {
  * Placeholder translation function
  * In production, this would call a real translation API
  */
-function translateText(text, currentLang) {
+function translateText(text, fromLang, toLang) {
     // Simple placeholder translations for demo
     const translations = {
         'en_to_ja': {
@@ -573,8 +593,7 @@ function translateText(text, currentLang) {
         }
     };
     
-    const targetLang = currentLang === 'ja' ? 'en' : 'ja';
-    const translationKey = currentLang === 'ja' ? 'ja_to_en' : 'en_to_ja';
+    const translationKey = fromLang === 'ja' ? 'ja_to_en' : 'en_to_ja';
     
     // Try to find exact match first
     if (translations[translationKey][text]) {
@@ -582,7 +601,7 @@ function translateText(text, currentLang) {
     }
     
     // Fallback: simple placeholder based on detected content
-    if (targetLang === 'ja') {
+    if (toLang === 'ja') {
         if (text.includes('Gojo') || text.includes('gojo')) {
             return "五条について: " + text.substring(0, 50) + "... [Translation placeholder]";
         } else if (text.includes('anime') || text.includes('character')) {
