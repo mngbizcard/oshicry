@@ -626,9 +626,18 @@ function translateText(text, fromLang, toLang) {
 function showTranslation(postId, translatedText) {
     const translationContainer = document.getElementById(`translation-${postId}`);
     const translationTextElement = document.getElementById(`translation-text-${postId}`);
+    const translationLabel = document.getElementById(`translation-label-${postId}`);
+    const userLang = document.querySelector('html').getAttribute('data-user-lang') || 'en';
     
     if (translationContainer && translationTextElement) {
         translationTextElement.textContent = translatedText;
+        
+        // Update the translation label to show correct target language
+        if (translationLabel) {
+            const targetLangName = userLang === 'ja' ? 'Japanese' : 'English';
+            translationLabel.textContent = `Translated to ${targetLangName}`;
+        }
+        
         translationContainer.style.display = 'block';
     }
 }
@@ -643,6 +652,24 @@ function hideTranslation(postId) {
     }
 }
 
+/**
+ * Initialize translate button visibility based on language detection
+ */
+function initTranslateButtons() {
+    const userLang = document.querySelector('html').getAttribute('data-user-lang') || 'en';
+    const translateButtons = document.querySelectorAll('.translate-btn');
+    
+    translateButtons.forEach(button => {
+        const content = button.dataset.content;
+        const postLang = detectLanguage(content);
+        
+        // Only show translate button if post language differs from user language
+        if (postLang !== userLang) {
+            button.style.display = 'inline-block';
+        }
+    });
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initCharacterCounter();
@@ -651,6 +678,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFlashMessages();
     initAnimeInteractions();
     initTranslation();
+    initTranslateButtons();
 });
 
 // Export functions for potential use by other scripts
