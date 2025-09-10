@@ -43,7 +43,17 @@ TRANSLATIONS = {
         'characters': 'Characters',
         'posts': 'Posts',
         'followers': 'Followers',
-        'following': 'Following'
+        'following': 'Following',
+        'official_partnership_projects': 'Official Partnership Projects',
+        'kadokawa_partnership': 'Kadokawa Partnership Project',
+        'kadokawa_description': 'Exclusive content collaboration with major anime publishers',
+        'premium_content': 'Premium Content',
+        'shueisha_collaboration': 'Shueisha Collaboration Campaign',
+        'shueisha_description': 'Special events and character spotlights from top manga series',
+        'live_events': 'Live Events',
+        'kodansha_creator_support': 'Kodansha Creator Support Program',
+        'kodansha_description': 'Community-driven content creation and fan appreciation',
+        'creator_hub': 'Creator Hub'
     },
     'ja': {
         'app_name': '推しCRY',
@@ -64,7 +74,17 @@ TRANSLATIONS = {
         'characters': 'キャラクター',
         'posts': '投稿',
         'followers': 'フォロワー',
-        'following': 'フォロー中'
+        'following': 'フォロー中',
+        'official_partnership_projects': '公式パートナープロジェクト',
+        'kadokawa_partnership': 'KADOKAWAパートナーシッププロジェクト',
+        'kadokawa_description': '主要アニメ出版社との独占コンテンツコラボレーション',
+        'premium_content': 'プレミアムコンテンツ',
+        'shueisha_collaboration': '集英社コラボレーションキャンペーン',
+        'shueisha_description': 'トップ漫画シリーズの特別イベントとキャラクタースポットライト',
+        'live_events': 'ライブイベント',
+        'kodansha_creator_support': '講談社クリエイターサポートプログラム',
+        'kodansha_description': 'コミュニティ主導のコンテンツ制作とファン感謝',
+        'creator_hub': 'クリエイターハブ'
     }
 }
 
