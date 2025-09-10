@@ -395,14 +395,23 @@ function formatRelativeTime(dateString) {
  */
 function handleFormSubmission(form) {
     const submitButton = form.querySelector('button[type="submit"]');
-    const originalText = submitButton.innerHTML;
+    const originalContent = submitButton.cloneNode(true);
     
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Posting...';
+    // Clear button and add loading state using safe DOM methods
+    submitButton.textContent = '';
+    const spinner = document.createElement('i');
+    spinner.className = 'fas fa-spinner fa-spin me-1';
+    const text = document.createTextNode('Posting...');
+    submitButton.appendChild(spinner);
+    submitButton.appendChild(text);
     submitButton.disabled = true;
     
     // Re-enable after form submission (this would normally be handled by page reload)
     setTimeout(() => {
-        submitButton.innerHTML = originalText;
+        submitButton.textContent = '';
+        while (originalContent.firstChild) {
+            submitButton.appendChild(originalContent.firstChild.cloneNode(true));
+        }
         submitButton.disabled = false;
     }, 2000);
 }
