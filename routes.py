@@ -25,7 +25,7 @@ def safe_redirect_url(referrer_url, fallback_url):
 # Language translations
 TRANSLATIONS = {
     'en': {
-        'app_name': 'OSHIdom CRY',
+        'app_name': 'OshiCRY',
         'home': 'Home',
         'works': 'Works',
         'profile': 'Profile',
