@@ -56,4 +56,17 @@ Preferred communication style: Simple, everyday language.
 - **Logging**: Built-in Python logging for debugging
 - **Debug Mode**: Flask development server with hot reload enabled
 
+### Creator Channels (声優・原作者・アニメーター)
+- **Creator Model**: Type-tagged entities (author, voice_actor, animator) with bilingual name/description, linked work IDs and character IDs
+- **Follow System**: Users can follow creators (following_creators set on User)
+- **Sample Data**: 9 creators — Isayama, Gotouge, Akutami (authors); Kaji, Hanae, Nakamura (voice actors); Sotozaki, Park, Araki (animators)
+- **Pages**: `/creators` list grouped by type, `/creator/<id>` channel page with posts feed, related works, voiced characters
+- **Navigation**: Creators dropdown in navbar with per-type grouping
+- **Sidebar**: Popular Creators widget on homepage
+
+### Fans' Funding
+- `/funding` list page and `/funding/<id>` detail pages
+- 4 sample campaigns, gold-orange CSS styling
+- Full bilingual support (en/ja)
+
 Note: The application currently uses in-memory data storage, which means data will not persist between server restarts. This architecture is suitable for development and testing but would need to be replaced with a persistent database solution for production use.
