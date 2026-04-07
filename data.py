@@ -245,6 +245,15 @@ def get_posts_for_user_timeline(user_id):
     user = users[user_id]
     timeline_posts = []
     
+    # Precompute work/character IDs associated with followed creators
+    creator_work_ids = set()
+    creator_char_ids = set()
+    for cid in user.following_creators:
+        creator = creators.get(cid)
+        if creator:
+            creator_work_ids.update(creator.works)
+            creator_char_ids.update(creator.characters)
+
     for post in posts.values():
         # Include posts from followed users
         if post.user_id in user.following_users:
@@ -254,6 +263,9 @@ def get_posts_for_user_timeline(user_id):
             timeline_posts.append(post)
         # Include posts from followed characters
         elif post.character_id in user.following_characters:
+            timeline_posts.append(post)
+        # Include posts related to followed creators (via linked works/characters)
+        elif post.work_id in creator_work_ids or post.character_id in creator_char_ids:
             timeline_posts.append(post)
         # Include user's own posts
         elif post.user_id == user_id:

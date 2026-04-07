@@ -426,6 +426,9 @@ def follow(follow_type, target_id):
             current_user.follow_character(target_id)
             flash('Following character.', 'success')
     elif follow_type == 'creator':
+        if target_id not in data.creators:
+            flash('Creator not found.', 'error')
+            return redirect(safe_redirect_url(request.referrer, url_for('index')))
         if target_id in current_user.following_creators:
             current_user.unfollow_creator(target_id)
             flash('Unfollowed creator.', 'info')
