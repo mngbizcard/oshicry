@@ -236,6 +236,43 @@
         </div>
         {% endif %}
 
+        <!-- Popular Creators -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-star me-2 text-warning"></i>{{ t('popular_creators') }}</h6>
+            </div>
+            <div class="card-body p-0">
+                {% for creator in popular_creators %}
+                <a href="{{ url_for('creator_channel', creator_id=creator.id) }}" class="list-group-item list-group-item-action border-0 py-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="avatar-circle-sm flex-shrink-0">
+                            {% if creator.creator_type == 'voice_actor' %}
+                                <i class="fas fa-microphone"></i>
+                            {% elif creator.creator_type == 'author' %}
+                                <i class="fas fa-pen-nib"></i>
+                            {% else %}
+                                <i class="fas fa-film"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <strong class="small">{{ creator.name_jp if lang == 'ja' and creator.name_jp else creator.name }}</strong>
+                            <small class="text-muted d-block">
+                                {% if creator.creator_type == 'voice_actor' %}{{ t('creator_type_voice_actor') }}
+                                {% elif creator.creator_type == 'author' %}{{ t('creator_type_author') }}
+                                {% else %}{{ t('creator_type_animator') }}{% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+                <div class="p-3 text-center border-top">
+                    <a href="{{ url_for('creators_list') }}" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="fas fa-star me-1"></i>{{ t('all_creators') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Fans' Funding -->
         <div class="card mb-4 funding-card">
             <div class="card-header funding-card-header">

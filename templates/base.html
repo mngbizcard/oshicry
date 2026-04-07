@@ -43,10 +43,50 @@
                             {% endfor %}
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}#popular">
-                            <i class="fas fa-fire me-1"></i>Popular
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-star me-1"></i>{{ t('creators') }}
                         </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item fw-semibold" href="{{ url_for('creators_list') }}">
+                                    <i class="fas fa-list me-1"></i>{{ t('all_creators') }}
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header">
+                                <i class="fas fa-pen-nib me-1"></i>{{ t('creator_type_author') }}
+                            </li>
+                            {% for creator in creators.values() if creator.creator_type == 'author' %}
+                            <li>
+                                <a class="dropdown-item ps-4" href="{{ url_for('creator_channel', creator_id=creator.id) }}">
+                                    {{ creator.name_jp if lang == 'ja' and creator.name_jp else creator.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header">
+                                <i class="fas fa-microphone me-1"></i>{{ t('creator_type_voice_actor') }}
+                            </li>
+                            {% for creator in creators.values() if creator.creator_type == 'voice_actor' %}
+                            <li>
+                                <a class="dropdown-item ps-4" href="{{ url_for('creator_channel', creator_id=creator.id) }}">
+                                    {{ creator.name_jp if lang == 'ja' and creator.name_jp else creator.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header">
+                                <i class="fas fa-film me-1"></i>{{ t('creator_type_animator') }}
+                            </li>
+                            {% for creator in creators.values() if creator.creator_type == 'animator' %}
+                            <li>
+                                <a class="dropdown-item ps-4" href="{{ url_for('creator_channel', creator_id=creator.id) }}">
+                                    {{ creator.name_jp if lang == 'ja' and creator.name_jp else creator.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </li>
                 </ul>
                 

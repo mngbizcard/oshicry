@@ -13,6 +13,7 @@ class User:
         self.following_users = set()
         self.following_works = set()
         self.following_characters = set()
+        self.following_creators = set()
         self.created_at = datetime.now()
     
     def check_password(self, password):
@@ -35,6 +36,24 @@ class User:
     
     def unfollow_character(self, character_id):
         self.following_characters.discard(character_id)
+
+    def follow_creator(self, creator_id):
+        self.following_creators.add(creator_id)
+
+    def unfollow_creator(self, creator_id):
+        self.following_creators.discard(creator_id)
+
+class Creator:
+    def __init__(self, creator_id, name, name_jp="", creator_type="voice_actor", description="", description_jp="", works=None):
+        self.id = creator_id
+        self.name = name
+        self.name_jp = name_jp
+        self.creator_type = creator_type  # 'author', 'voice_actor', 'animator'
+        self.description = description
+        self.description_jp = description_jp
+        self.works = works or []  # list of work_ids
+        self.characters = []  # list of character_ids (for voice actors)
+        self.created_at = datetime.now()
 
 class Work:
     def __init__(self, work_id, name, name_jp="", description=""):

@@ -1,4 +1,4 @@
-from models import User, Work, Character, Post
+from models import User, Work, Character, Post, Creator
 from werkzeug.security import generate_password_hash
 
 # In-memory storage
@@ -6,12 +6,14 @@ users = {}
 works = {}
 characters = {}
 posts = {}
+creators = {}
 
 # Counters for IDs
 user_counter = 1
 work_counter = 1
 character_counter = 1
 post_counter = 1
+creator_counter = 1
 
 def get_next_user_id():
     global user_counter
@@ -32,6 +34,11 @@ def get_next_post_id():
     global post_counter
     post_counter += 1
     return post_counter - 1
+
+def get_next_creator_id():
+    global creator_counter
+    creator_counter += 1
+    return creator_counter - 1
 
 def init_data():
     """Initialize the app with test data"""
@@ -66,6 +73,57 @@ def init_data():
     for char in [eren, mikasa, levi, hange, tanjiro, nezuko, zenitsu, giyu, yuji, gojo, nobara, megumi]:
         characters[char.id] = char
         works[char.work_id].add_character(char)
+
+    # --- Creators ---
+    # Authors (原作者)
+    isayama = Creator(get_next_creator_id(), "Hajime Isayama", "諫山創", "author",
+        "Creator of Attack on Titan. He drew the manga from 2009 to 2021.",
+        "進撃の巨人の原作者。2009年から2021年まで漫画を執筆。",
+        works=[aot.id])
+    gotouge = Creator(get_next_creator_id(), "Koyoharu Gotouge", "吾峠呼世晴", "author",
+        "Creator of Demon Slayer: Kimetsu no Yaiba.",
+        "鬼滅の刃の原作者。",
+        works=[ds.id])
+    akutami = Creator(get_next_creator_id(), "Gege Akutami", "芥見下々", "author",
+        "Creator of Jujutsu Kaisen, serialized in Weekly Shonen Jump.",
+        "呪術廻戦の原作者。週刊少年ジャンプで連載中。",
+        works=[jjk.id])
+
+    # Voice Actors (声優)
+    kaji = Creator(get_next_creator_id(), "Yuki Kaji", "梶裕貴", "voice_actor",
+        "Voice of Eren Yeager in Attack on Titan. One of Japan's most prolific voice actors.",
+        "進撃の巨人のエレン・イェーガー役。日本を代表する声優の一人。",
+        works=[aot.id])
+    kaji.characters = [eren.id]
+
+    hanae = Creator(get_next_creator_id(), "Natsuki Hanae", "花江夏樹", "voice_actor",
+        "Voice of Tanjiro Kamado in Demon Slayer.",
+        "鬼滅の刃の竈門炭治郎役。",
+        works=[ds.id])
+    hanae.characters = [tanjiro.id]
+
+    nakamura = Creator(get_next_creator_id(), "Yuichi Nakamura", "中村悠一", "voice_actor",
+        "Voice of Satoru Gojo in Jujutsu Kaisen.",
+        "呪術廻戦の五条悟役。",
+        works=[jjk.id])
+    nakamura.characters = [gojo.id]
+
+    # Animators (アニメーター)
+    sotozaki = Creator(get_next_creator_id(), "Haruo Sotozaki", "外崎春雄", "animator",
+        "Director of Demon Slayer anime series at ufotable.",
+        "ufotableによる鬼滅の刃アニメシリーズの監督。",
+        works=[ds.id])
+    park = Creator(get_next_creator_id(), "Sung-Hu Park", "朴性厚", "animator",
+        "Director of Jujutsu Kaisen anime series at MAPPA.",
+        "MAPPAによる呪術廻戦アニメシリーズの監督。",
+        works=[jjk.id])
+    araki = Creator(get_next_creator_id(), "Tetsuro Araki", "荒木哲郎", "animator",
+        "Director of Attack on Titan seasons 1–3 at Wit Studio.",
+        "Wit Studioによる進撃の巨人シーズン1〜3の監督。",
+        works=[aot.id])
+
+    for creator in [isayama, gotouge, akutami, kaji, hanae, nakamura, sotozaki, park, araki]:
+        creators[creator.id] = creator
     
     # Create sample users
     user1 = create_user("anime_fan_2024", "fan@example.com", "password123", "AnimeOtaku", "Big fan of shounen anime! Gojo is my oshi 💜", "en")
@@ -241,3 +299,33 @@ def get_latest_posts(limit=10):
     """Get latest posts across all works and characters"""
     latest_posts = sorted(posts.values(), key=lambda x: x.created_at, reverse=True)
     return latest_posts[:limit]
+
+def get_posts_for_creator(creator_id):
+    """Get posts related to a creator (via linked works/characters)"""
+    if creator_id not in creators:
+        return []
+    creator = creators[creator_id]
+    creator_work_ids = set(creator.works)
+    creator_char_ids = set(creator.characters)
+    result = [
+        post for post in posts.values()
+        if (post.work_id in creator_work_ids or post.character_id in creator_char_ids)
+        and post.parent_id is None
+    ]
+    result.sort(key=lambda x: x.created_at, reverse=True)
+    return result
+
+def get_popular_creators(limit=5):
+    """Return creators sorted by number of related posts"""
+    def score(creator):
+        work_ids = set(creator.works)
+        char_ids = set(creator.characters)
+        return sum(
+            1 for p in posts.values()
+            if p.work_id in work_ids or p.character_id in char_ids
+        )
+    return sorted(creators.values(), key=score, reverse=True)[:limit]
+
+def get_creators_by_type(creator_type):
+    """Return all creators of a given type"""
+    return [c for c in creators.values() if c.creator_type == creator_type]

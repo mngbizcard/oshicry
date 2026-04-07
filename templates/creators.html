@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('all_creators') }} - {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="fw-bold mb-1">
+            <i class="fas fa-star me-2 text-warning"></i>{{ t('all_creators') }}
+        </h2>
+        <p class="text-muted mb-4">{{ t('creator_type_author') }}・{{ t('creator_type_voice_actor') }}・{{ t('creator_type_animator') }}</p>
+    </div>
+</div>
+
+<!-- Authors -->
+<div class="mb-5">
+    <h4 class="fw-bold mb-3 border-bottom pb-2">
+        <i class="fas fa-pen-nib me-2 text-primary"></i>{{ t('creator_type_author') }}
+    </h4>
+    <div class="row g-4">
+        {% for creator in authors %}
+        <div class="col-md-4">
+            <a href="{{ url_for('creator_channel', creator_id=creator.id) }}" class="text-decoration-none">
+                <div class="card h-100 creator-card">
+                    <div class="card-body text-center py-4">
+                        <div class="creator-avatar-lg mx-auto mb-3">
+                            <i class="fas fa-pen-nib fa-2x"></i>
+                        </div>
+                        <h5 class="card-title mb-0 text-body">
+                            {{ creator.name_jp if lang == 'ja' and creator.name_jp else creator.name }}
+                        </h5>
+                        {% if creator.name_jp and lang == 'en' %}
+                        <small class="text-muted">{{ creator.name_jp }}</small>
+                        {% elif creator.name and lang == 'ja' %}
+                        <small class="text-muted">{{ creator.name }}</small>
+                        {% endif %}
+                        <p class="card-text text-muted small mt-2">
+                            {{ creator.description_jp if lang == 'ja' and creator.description_jp else creator.description }}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Voice Actors -->
+<div class="mb-5">
+    <h4 class="fw-bold mb-3 border-bottom pb-2">
+        <i class="fas fa-microphone me-2 text-success"></i>{{ t('creator_type_voice_actor') }}
+    </h4>
+    <div class="row g-4">
+        {% for creator in voice_actors %}
+        <div class="col-md-4">
+            <a href="{{ url_for('creator_channel', creator_id=creator.id) }}" class="text-decoration-none">
+                <div class="card h-100 creator-card">
+                    <div class="card-body text-center py-4">
+                        <div class="creator-avatar-lg mx-auto mb-3 creator-avatar-va">
+                            <i class="fas fa-microphone fa-2x"></i>
+                        </div>
+                        <h5 class="card-title mb-0 text-body">
+                            {{ creator.name_jp if lang == 'ja' and creator.name_jp else creator.name }}
+                        </h5>
+                        {% if creator.name_jp and lang == 'en' %}
+                        <small class="text-muted">{{ creator.name_jp }}</small>
+                        {% elif creator.name and lang == 'ja' %}
+                        <small class="text-muted">{{ creator.name }}</small>
+                        {% endif %}
+                        <p class="card-text text-muted small mt-2">
+                            {{ creator.description_jp if lang == 'ja' and creator.description_jp else creator.description }}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Animators -->
+<div class="mb-5">
+    <h4 class="fw-bold mb-3 border-bottom pb-2">
+        <i class="fas fa-film me-2 text-danger"></i>{{ t('creator_type_animator') }}
+    </h4>
+    <div class="row g-4">
+        {% for creator in animators %}
+        <div class="col-md-4">
+            <a href="{{ url_for('creator_channel', creator_id=creator.id) }}" class="text-decoration-none">
+                <div class="card h-100 creator-card">
+                    <div class="card-body text-center py-4">
+                        <div class="creator-avatar-lg mx-auto mb-3 creator-avatar-anim">
+                            <i class="fas fa-film fa-2x"></i>
+                        </div>
+                        <h5 class="card-title mb-0 text-body">
+                            {{ creator.name_jp if lang == 'ja' and creator.name_jp else creator.name }}
+                        </h5>
+                        {% if creator.name_jp and lang == 'en' %}
+                        <small class="text-muted">{{ creator.name_jp }}</small>
+                        {% elif creator.name and lang == 'ja' %}
+                        <small class="text-muted">{{ creator.name }}</small>
+                        {% endif %}
+                        <p class="card-text text-muted small mt-2">
+                            {{ creator.description_jp if lang == 'ja' and creator.description_jp else creator.description }}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -58,7 +58,16 @@ TRANSLATIONS = {
         'see_all_funding': 'See all funding',
         'others': 'Others...',
         'funding_active': 'Active',
-        'funding_detail': 'View Campaign'
+        'funding_detail': 'View Campaign',
+        'creators': 'Creators',
+        'creator_type_author': 'Manga Author',
+        'creator_type_voice_actor': 'Voice Actor',
+        'creator_type_animator': 'Animator / Director',
+        'all_creators': 'All Creators',
+        'popular_creators': 'Popular Creators',
+        'no_posts_creator': 'No posts yet for this creator.',
+        'related_works': 'Related Works',
+        'voiced_characters': 'Voiced Characters'
     },
     'ja': {
         'app_name': '推しCRY',
@@ -94,7 +103,16 @@ TRANSLATIONS = {
         'see_all_funding': 'すべての資金調達を見る',
         'others': 'その他...',
         'funding_active': '募集中',
-        'funding_detail': 'キャンペーンを見る'
+        'funding_detail': 'キャンペーンを見る',
+        'creators': 'クリエイター',
+        'creator_type_author': '原作者',
+        'creator_type_voice_actor': '声優',
+        'creator_type_animator': 'アニメーター / 監督',
+        'all_creators': 'すべてのクリエイター',
+        'popular_creators': '人気クリエイター',
+        'no_posts_creator': 'このクリエイターに関する投稿はまだありません。',
+        'related_works': '関連作品',
+        'voiced_characters': '担当キャラクター'
     }
 }
 
@@ -159,7 +177,8 @@ def inject_user():
         't': lambda key: get_translation(key, lang),
         'works': data.works,
         'characters': data.characters,
-        'users': data.users
+        'users': data.users,
+        'creators': data.creators,
     }
 
 @app.route('/')
@@ -175,11 +194,13 @@ def index():
     
     popular_works = data.get_popular_works()
     popular_characters = data.get_popular_characters()
+    popular_creators = data.get_popular_creators(limit=5)
     
     return render_template('index.html', 
                          posts=timeline_posts,
                          popular_works=popular_works,
                          popular_characters=popular_characters,
+                         popular_creators=popular_creators,
                          works=data.works,
                          characters=data.characters,
                          users=data.users,
@@ -404,6 +425,13 @@ def follow(follow_type, target_id):
         else:
             current_user.follow_character(target_id)
             flash('Following character.', 'success')
+    elif follow_type == 'creator':
+        if target_id in current_user.following_creators:
+            current_user.unfollow_creator(target_id)
+            flash('Unfollowed creator.', 'info')
+        else:
+            current_user.follow_creator(target_id)
+            flash('Following creator.', 'success')
     
     return redirect(safe_redirect_url(request.referrer, url_for('index')))
 
@@ -423,6 +451,32 @@ def view_post(post_id):
                          works=data.works,
                          characters=data.characters,
                          users=data.users)
+
+@app.route('/creators')
+def creators_list():
+    lang = session.get('language', 'en')
+    authors = data.get_creators_by_type('author')
+    voice_actors = data.get_creators_by_type('voice_actor')
+    animators = data.get_creators_by_type('animator')
+    return render_template('creators.html',
+                           authors=authors,
+                           voice_actors=voice_actors,
+                           animators=animators)
+
+@app.route('/creator/<int:creator_id>')
+def creator_channel(creator_id):
+    creator = data.creators.get(creator_id)
+    if not creator:
+        flash('Creator not found.', 'error')
+        return redirect(url_for('index'))
+    creator_posts = data.get_posts_for_creator(creator_id)
+    related_works = [data.works[wid] for wid in creator.works if wid in data.works]
+    voiced_chars = [data.characters[cid] for cid in creator.characters if cid in data.characters]
+    return render_template('creator.html',
+                           creator=creator,
+                           creator_posts=creator_posts,
+                           related_works=related_works,
+                           voiced_chars=voiced_chars)
 
 @app.route('/set_language/<lang>')
 def set_language(lang):

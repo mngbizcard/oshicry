@@ -792,6 +792,53 @@ footer {
     font-weight: 600;
 }
 
+/* Creator Cards */
+.creator-card {
+    border: 1px solid rgba(111, 66, 193, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.creator-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(111, 66, 193, 0.18);
+    border-color: rgba(111, 66, 193, 0.4);
+}
+
+.creator-avatar-lg {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6f42c1, #a855f7);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.creator-avatar-va {
+    background: linear-gradient(135deg, #198754, #34d399);
+}
+
+.creator-avatar-anim {
+    background: linear-gradient(135deg, #dc3545, #f87171);
+}
+
+.creator-channel-icon {
+    background: linear-gradient(135deg, #6f42c1, #a855f7);
+}
+
+.avatar-circle-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6f42c1, #a855f7);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+
 /* Fans' Funding Card */
 .funding-card-header {
     background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
