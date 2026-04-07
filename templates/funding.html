@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('fans_funding') }} - {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <h4 class="mb-0"><i class="fas fa-coins me-2 text-primary"></i>{{ t('fans_funding') }}</h4>
+        </div>
+
+        {% for campaign in funding_campaigns %}
+        <a href="{{ url_for('funding_detail', campaign_id=campaign.id) }}" class="text-decoration-none">
+            <div class="card mb-3 funding-list-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="funding-icon-wrap-lg flex-shrink-0">
+                            <i class="{{ campaign.icon }} fa-lg"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h6 class="mb-1 text-dark">
+                                    {{ campaign.title_ja if lang == 'ja' else campaign.title_en }}
+                                </h6>
+                                <span class="badge funding-badge ms-2">{{ t('funding_active') }}</span>
+                            </div>
+                            <div class="funding-work mb-1">
+                                <i class="fas fa-book me-1"></i>{{ campaign.work_ja if lang == 'ja' else campaign.work_en }}
+                            </div>
+                            <p class="text-muted small mb-0">
+                                {{ campaign.description_ja if lang == 'ja' else campaign.description_en }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+
+        <div class="text-center mt-2">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-1"></i>{{ t('home') }}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

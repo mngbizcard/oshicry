@@ -53,7 +53,12 @@ TRANSLATIONS = {
         'live_events': 'Live Events',
         'kodansha_creator_support': 'Kodansha Creator Support Program',
         'kodansha_description': 'Community-driven content creation and fan appreciation',
-        'creator_hub': 'Creator Hub'
+        'creator_hub': 'Creator Hub',
+        'fans_funding': "Fans' Funding",
+        'see_all_funding': 'See all funding',
+        'others': 'Others...',
+        'funding_active': 'Active',
+        'funding_detail': 'View Campaign'
     },
     'ja': {
         'app_name': '推しCRY',
@@ -84,9 +89,57 @@ TRANSLATIONS = {
         'live_events': 'ライブイベント',
         'kodansha_creator_support': '講談社クリエイターサポートプログラム',
         'kodansha_description': 'コミュニティ主導のコンテンツ制作とファン感謝',
-        'creator_hub': 'クリエイターハブ'
+        'creator_hub': 'クリエイターハブ',
+        'fans_funding': 'ファンファンディング',
+        'see_all_funding': 'すべての資金調達を見る',
+        'others': 'その他...',
+        'funding_active': '募集中',
+        'funding_detail': 'キャンペーンを見る'
     }
 }
+
+FUNDING_CAMPAIGNS = [
+    {
+        'id': 1,
+        'title_en': "Gojo's morning voice",
+        'title_ja': '五条の朝の声',
+        'work_en': 'Jujutsu Kaisen',
+        'work_ja': '呪術廻戦',
+        'description_en': 'Fund a special morning voice pack from Gojo Satoru',
+        'description_ja': '五条悟の特別モーニングボイスパックを応援しよう',
+        'icon': 'fas fa-microphone',
+    },
+    {
+        'id': 2,
+        'title_en': "Levi's original voice story",
+        'title_ja': 'リヴァイのオリジナルボイスストーリー',
+        'work_en': 'Attack on Titan',
+        'work_ja': '進撃の巨人',
+        'description_en': 'An exclusive audio story featuring Captain Levi',
+        'description_ja': '兵長リヴァイが登場する特別な音声ストーリー',
+        'icon': 'fas fa-headphones',
+    },
+    {
+        'id': 3,
+        'title_en': "Nezuko's backstory episode",
+        'title_ja': '禰豆子の過去エピソード',
+        'work_en': 'Demon Slayer',
+        'work_ja': '鬼滅の刃',
+        'description_en': "A fan-funded animated episode exploring Nezuko's past",
+        'description_ja': '禰豆子の過去を描くファン制作アニメ',
+        'icon': 'fas fa-film',
+    },
+    {
+        'id': 4,
+        'title_en': "Tanjiro's training arc",
+        'title_ja': '炭治郎の修行編',
+        'work_en': 'Demon Slayer',
+        'work_ja': '鬼滅の刃',
+        'description_en': 'Support an extended training arc manga for Tanjiro',
+        'description_ja': '炭治郎の修行編漫画の拡張版をサポート',
+        'icon': 'fas fa-fist-raised',
+    },
+]
 
 def get_translation(key, lang='en'):
     return TRANSLATIONS.get(lang, TRANSLATIONS['en']).get(key, key)
@@ -129,7 +182,22 @@ def index():
                          popular_characters=popular_characters,
                          works=data.works,
                          characters=data.characters,
-                         users=data.users)
+                         users=data.users,
+                         funding_campaigns=FUNDING_CAMPAIGNS)
+
+@app.route('/funding')
+def funding_list():
+    lang = session.get('language', 'en')
+    return render_template('funding.html',
+                         funding_campaigns=FUNDING_CAMPAIGNS)
+
+@app.route('/funding/<int:campaign_id>')
+def funding_detail(campaign_id):
+    campaign = next((c for c in FUNDING_CAMPAIGNS if c['id'] == campaign_id), None)
+    if not campaign:
+        flash('Campaign not found.', 'error')
+        return redirect(url_for('index'))
+    return render_template('funding_detail.html', campaign=campaign)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

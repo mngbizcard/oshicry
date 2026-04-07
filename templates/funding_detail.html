@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ campaign.title_ja if lang == 'ja' else campaign.title_en }} - {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card funding-detail-card">
+            <div class="card-body text-center py-5">
+                <div class="funding-icon-wrap-xl mx-auto mb-4">
+                    <i class="{{ campaign.icon }} fa-2x"></i>
+                </div>
+                <h3 class="mb-1">
+                    {{ campaign.title_ja if lang == 'ja' else campaign.title_en }}
+                </h3>
+                <div class="funding-work mb-3">
+                    <i class="fas fa-book me-1"></i>{{ campaign.work_ja if lang == 'ja' else campaign.work_en }}
+                </div>
+                <span class="badge funding-badge mb-4">{{ t('funding_active') }}</span>
+                <p class="text-muted mb-4">
+                    {{ campaign.description_ja if lang == 'ja' else campaign.description_en }}
+                </p>
+                <a href="{{ url_for('funding_list') }}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-arrow-left me-1"></i>{{ t('others') }}
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-1"></i>{{ t('home') }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
